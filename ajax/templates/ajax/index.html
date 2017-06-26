@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% for point in menu %}
+        <h2 style="display: inline"><a href="{% url 'update_post' point.id %}">{{ point.name }}</a>&nbsp;&nbsp;&nbsp;</h2>
+    {% endfor %}
+    <hr>
+    <h1>{{ like.name }}</h1>
+    Like in post:<h3 id="like" style="display: inline">{{ like.like }}</h3><br>
+    author: <h3 style="display: inline"> {{ like.author.user.username }}</h3><br>
+    author like: <h3 id="author-like" style="display: inline"> {{ like.author.like }}</h3><br>
+    {% if auth %}
+        <br>
+        {% if not push_like and not you_post%}
+            <a href="#" id="ajax-text-me">Натисни мене ніжно</a><br>
+        {% endif %}
+        {% for liker in liking %}
+            {{ liker }},&nbsp;
+        {% endfor %}
+        <hr>
+        you: <h3 style="display: inline">{{ user }}</h3><br>
+        available: <h3 id="avai" style="display: inline"> {{ user.like }}</h3><br>
+    {% endif %}
+
+
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+        var content = document.getElementById("like");
+        var url = document.createElement('a');
+        url.href = document.URL
+        $(document).ready(function () {
+            $("#ajax-text-me").click(function() {
+                $.ajax({
+                    type: 'GET',
+                    async: true,
+                    url: '/ajax'+url.pathname,
+                    success: function(data) {
+                        $("#like").html(data['count_like']);
+                        $("#author-like").html(data['author-like']);
+                        $("#avai").html(data['available']);
+                    },
+                    dataType: 'json'
+                });
+            });
+        });
+
+
+    </script>
+
+
+</body>
+</html>
